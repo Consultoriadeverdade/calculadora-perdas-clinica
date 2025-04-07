@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Perdas por Cancelamentos - INBEO</title>
+    <style>
+        :root {
+            --primary: #0056b3;
+            --primary-dark: #004494;
+            --secondary: #28a745;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --danger: #dc3545;
+            --warning: #ffc107;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f7fa;
+        }
+        
+        .calculator-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header img {
+            max-width: 150px;
+            margin-bottom: 15px;
+        }
+        
+        h1 {
+            color: var(--primary);
+            font-size: 24px;
+            margin: 0 0 10px;
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            color: #666;
+            margin: 0;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        input[type="number"], select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .col {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .results {
+            display: none;
+            padding: 20px;
+            background-color: var(--light);
+            border-radius: 8px;
+            margin-top: 30px;
+            border-left: 5px solid var(--primary);
+        }
+        
+        .result-heading {
+            color: var(--primary);
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        
+        .metric {
+            margin-bottom: 20px;
+        }
+        
+        .metric-label {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .metric-value {
+            font-size: 22px;
+            font-weight: 700;
+        }
+        
+        .danger-value {
+            color: var(--danger);
+        }
+        
+        .warning-value {
+            color: var(--warning);
+        }
+        
+        .positive-value {
+            color: var(--secondary);
+        }
+        
+        .insight {
+            background-color: #e8f4fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-style: italic;
+        }
+        
+        .cta-section {
+            text-align: center;
+            margin-top: 40px;
+        }
+        
+        .cta-button {
+            background-color: var(--secondary);
+            display: inline-block;
+            padding: 12px 25px;
+            text-decoration: none;
+            color: white;
+            border-radius: 5px;
+            font-weight: 600;
+            margin-top: 15px;
+        }
+        
+        .cta-button:hover {
+            background-color: #218838;
+        }
+        
+        .footnote {
+            font-size: 12px;
+            color: #666;
+            margin-top: 30px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator-container">
+        <div class="header">
+            <h1>Calculadora de Perdas Financeiras por Cancelamentos</h1>
+            <p class="subtitle">Descubra quanto sua clínica está perdendo com cancelamentos e não-comparecimentos</p>
+        </div>
+        
+        <div class="form-section">
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label for="appointments">Número médio de consultas agendadas por mês:</label>
+                        <input type="number" id="appointments" min="0" value="200">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label for="cancellation-rate">Taxa de cancelamentos e faltas (%):</label>
+                        <input type="number" id="cancellation-rate" min="0" max="100" value="15">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label for="avg-value">Valor médio da consulta/procedimento (R$):</label>
+                        <input type="number" id="avg-value" min="0" value="250">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label for="rescheduling-rate">Taxa de reagendamento após cancelamento (%):</label>
+                        <input type="number" id="rescheduling-rate" min="0" max="100" value="40">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label for="return-rate">Taxa média de retorno de pacientes (%):</label>
+                        <input type="number" id="return-rate" min="0" max="100" value="60">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label for="avg-sessions">Número médio de consultas/sessões por paciente:</label>
+                        <input type="number" id="avg-sessions" min="1" value="4">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label for="clinic-type">Tipo de Clínica:</label>
+                        <select id="clinic-type">
+                            <option value="medical">Médica</option>
+                            <option value="dental">Odontológica</option>
+                            <option value="aesthetics">Estética</option>
+                            <option value="therapy">Terapêutica</option>
+                            <option value="other">Outra</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label for="idle-cost">Custo operacional por hora ociosa (R$):</label>
+                        <input type="number" id="idle-cost" min="0" value="120">
+                    </div>
+                </div>
+            </div>
+            
+            <button onclick="calculateLosses()">Calcular Perdas Financeiras</button>
+        </div>
+        
+        <div id="results" class="results">
+            <h3 class="result-heading">Análise de Impacto Financeiro</h3>
+            
+            <div class="metric">
+                <div class="metric-label">Perda mensal direta por cancelamentos:</div>
+                <div class="metric-value danger-value" id="monthly-loss">R$ 0,00</div>
+            </div>
+            
+            <div class="metric">
+                <div class="metric-label">Perda anual projetada:</div>
+                <div class="metric-value danger-value" id="yearly-loss">R$ 0,00</div>
+            </div>
+            
+            <div class="metric">
+                <div class="metric-label">Custo operacional de horas ociosas por mês:</div>
+                <div class="metric-value warning-value" id="idle-loss">R$ 0,00</div>
+            </div>
+            
+            <div class="metric">
+                <div class="metric-label">Perda de valor vitalício potencial do cliente:</div>
+                <div class="metric-value danger-value" id="ltv-loss">R$ 0,00</div>
+            </div>
+            
+            <div class="metric">
+                <div class="metric-label">Economia potencial com melhoria de 30% na taxa de cancelamento:</div>
+                <div class="metric-value positive-value" id="potential-saving">R$ 0,00</div>
+            </div>
+            
+            <div class="insight" id="insight-text">
+                Com base nos dados informados, sua clínica está perdendo uma quantidade significativa de receita devido a cancelamentos. Um treinamento adequado para suas CRCs poderia reduzir consideravelmente estas perdas.
+            </div>
+        </div>
+    </div>
+    
+    <div class="cta-section">
+        <h3>Transforme Cancelamentos em Oportunidades!</h3>
+        <p>Nosso curso de Imersão Intensiva em Atendimento ao Cliente de Excelência fornece ferramentas práticas para reduzir cancelamentos em até 40% e aumentar a fidelização dos seus pacientes.</p>
+        <a href="#" class="cta-button">Garantir Minha Vaga por R$800</a>
+        <p><strong>Bônus para os 20 primeiros inscritos:</strong> 1h de consultoria personalizada para sua clínica.</p>
+    </div>
+    
+    <p class="footnote">* Cálculos baseados em médias do setor e dados fornecidos. Os resultados podem variar conforme a implementação das técnicas.</p>
+
+    <script>
+        function calculateLosses() {
+            // Get input values
+            const appointments = parseFloat(document.getElementById('appointments').value) || 0;
+            const cancellationRate = parseFloat(document.getElementById('cancellation-rate').value) || 0;
+            const avgValue = parseFloat(document.getElementById('avg-value').value) || 0;
+            const reschedulingRate = parseFloat(document.getElementById('rescheduling-rate').value) || 0;
+            const returnRate = parseFloat(document.getElementById('return-rate').value) || 0;
+            const avgSessions = parseFloat(document.getElementById('avg-sessions').value) || 0;
+            const idleCost = parseFloat(document.getElementById('idle-cost').value) || 0;
+            const clinicType = document.getElementById('clinic-type').value;
+            
+            // Calculate metrics
+            const cancelledAppointments = appointments * (cancellationRate / 100);
+            const rescheduledAppointments = cancelledAppointments * (reschedulingRate / 100);
+            const netCancelledAppointments = cancelledAppointments - rescheduledAppointments;
+            
+            const monthlyLoss = netCancelledAppointments * avgValue;
+            const yearlyLoss = monthlyLoss * 12;
+            
+            // Assume each appointment takes 1 hour (can be adjusted)
+            const idleLoss = netCancelledAppointments * idleCost;
+            
+            // Calculate lifetime value loss
+            const avgLifetimeValue = avgValue * avgSessions * (1 + returnRate/100);
+            const ltvLoss = netCancelledAppointments * avgLifetimeValue;
+            
+            // Calculate potential savings with 30% improvement
+            const improvedCancellationRate = cancellationRate * 0.7; // 30% reduction
+            const improvedCancelledAppointments = appointments * (improvedCancellationRate / 100);
+            const improvedRescheduledAppointments = improvedCancelledAppointments * (reschedulingRate / 100);
+            const improvedNetCancelledAppointments = improvedCancelledAppointments - improvedRescheduledAppointments;
+            
+            const improvedMonthlyLoss = improvedNetCancelledAppointments * avgValue;
+            const potentialSaving = monthlyLoss - improvedMonthlyLoss;
+            
+            // Display results
+            document.getElementById('monthly-loss').textContent = `R$ ${monthlyLoss.toFixed(2).replace('.', ',')}`;
+            document.getElementById('yearly-loss').textContent = `R$ ${yearlyLoss.toFixed(2).replace('.', ',')}`;
+            document.getElementById('idle-loss').textContent = `R$ ${idleLoss.toFixed(2).replace('.', ',')}`;
+            document.getElementById('ltv-loss').textContent = `R$ ${ltvLoss.toFixed(2).replace('.', ',')}`;
+            document.getElementById('potential-saving').textContent = `R$ ${potentialSaving.toFixed(2).replace('.', ',')}`;
+            
+            // Customize insight based on clinic type and values
+            let insightText = "";
+            if (cancellationRate > 20) {
+                insightText = `Sua taxa de cancelamento de ${cancellationRate}% está acima da média do setor para clínicas ${getClinicTypeInPortuguese(clinicType)}. Com técnicas adequadas de gerenciamento de agenda e confirmação, você poderia economizar R$ ${potentialSaving.toFixed(2).replace('.', ',')} mensalmente.`;
+            } else if (cancellationRate > 10) {
+                insightText = `Sua taxa de cancelamento de ${cancellationRate}% está próxima da média do setor, mas ainda representa uma perda anual de R$ ${yearlyLoss.toFixed(2).replace('.', ',')}. Treinamento adequado das suas CRCs poderia converter essas perdas em receita.`;
+            } else {
+                insightText = `Sua taxa de cancelamento de ${cancellationRate}% está abaixo da média do setor, o que é excelente! Ainda assim, você poderia melhorar a experiência do paciente e economizar R$ ${potentialSaving.toFixed(2).replace('.', ',')} mensalmente com técnicas avançadas de atendimento.`;
+            }
+            
+            document.getElementById('insight-text').textContent = insightText;
+            
+            // Show results
+            document.getElementById('results').style.display = 'block';
+        }
+        
+        function getClinicTypeInPortuguese(type) {
+            const types = {
+                'medical': 'médicas',
+                'dental': 'odontológicas',
+                'aesthetics': 'de estética',
+                'therapy': 'terapêuticas',
+                'other': 'do seu setor'
+            };
+            return types[type] || 'do seu setor';
+        }
+    </script>
+</body>
+</html>
